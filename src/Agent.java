@@ -17,7 +17,12 @@ class Agent {
 
     void drawPlan(Graphics g, Model m) {
         g.setColor(Color.red);
-        g.drawLine((int) m.getX(), (int) m.getY(), (int) m.getDestinationX(), (int) m.getDestinationY());
+        //g.drawLine((int) m.getX(), (int) m.getY(), (int) m.getDestinationX(), (int) m.getDestinationY());
+        if (correctPath != null && correctPath.size() > 0) {
+            for (int i = 0; i < correctPath.size() - 1; i++) {
+                g.drawLine((int) correctPath.get(i).x, (int) correctPath.get(i).y, (int) correctPath.get(i + 1).x, (int) correctPath.get(i + 1).y);
+            }
+        }
     }
 
     void update(Model m) {
@@ -27,9 +32,11 @@ class Agent {
 
         while (true) {
             MouseEvent e = c.nextMouseEvent();
-            if (startPrinting && i < correctPath.size()) {
-                m.setDestination(correctPath.get(i).x, correctPath.get(i).y);
+            if (startPrinting && i < correctPath.size() - 1 && correctPath.get(i).x == m.getX() && correctPath.get(i).y == m.getY()) {
                 i++;
+                m.setDestination(correctPath.get(i).x, correctPath.get(i).y);
+
+
             }
             if (e == null)
                 break;

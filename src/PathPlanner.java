@@ -1,6 +1,9 @@
 import java.util.PriorityQueue;
 import java.util.TreeSet;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
+
 
 public class PathPlanner {
 
@@ -53,7 +56,10 @@ public class PathPlanner {
         nextState.x = nextState.parent.x + xDelta;
         nextState.y = nextState.parent.y + yDelta;
         if (nextState.x < Model.XMAX && nextState.x >= 0 && nextState.y < Model.YMAX && nextState.y >= 0)
-            nextState.cost = model.getTravelSpeed(nextState.x / 10, nextState.y / 10) + nextState.parent.cost;
+            if (abs(xDelta) + abs(yDelta) == 20)
+                nextState.cost = (10 * sqrt(2) / model.getTravelSpeed(nextState.x, nextState.y)) + nextState.parent.cost;
+            else
+                nextState.cost = (10 / model.getTravelSpeed(nextState.x, nextState.y)) + nextState.parent.cost;
         else
             return;
 
