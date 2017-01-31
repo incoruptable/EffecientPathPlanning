@@ -19,12 +19,21 @@ public class GameState {
     }
 }
 
-class StateComparator implements Comparator<GameState> {
+class StateComparatorPriority implements Comparator<GameState> {
     public int compare(GameState a, GameState b) {
         if (a.cost < b.cost)
             return -1;
         else if (a.cost > b.cost)
             return 1;
         return 0;
+    }
+}
+
+class StateComparator implements Comparator<GameState> {
+    public int compare(GameState a, GameState b) {
+        if (a.x == b.x && a.y == b.y)
+            return 0;
+        else
+            return 1;
     }
 }
