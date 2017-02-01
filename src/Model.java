@@ -83,9 +83,8 @@ class Model {
         s.yDestination = y;
     }
 
-    double getDistanceToDestination(int sprite) {
-        Sprite s = sprites.get(sprite);
-        return Math.sqrt((s.x - s.xDestination) * (s.x - s.xDestination) + (s.y - s.yDestination) * (s.y - s.yDestination));
+    double getDistanceToDestination(GameState a, GameState b) {
+        return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
     }
 
     class Sprite {

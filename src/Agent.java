@@ -1,15 +1,18 @@
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 class Agent {
 
     PathPlanner pathPlanner;
-    int i;
     List<GameState> correctPath;
-    boolean startPrinting = false;
+    PriorityQueue<GameState> frontier;
+    GameState finalState;
+    boolean uniformCostSearch = false;
+    boolean aStarSearch = false;
 
     public static void main(String[] args) throws Exception {
         Controller.playGame();
@@ -22,38 +25,91 @@ class Agent {
             for (int i = 0; i < correctPath.size() - 1; i++) {
                 g.drawLine((int) correctPath.get(i).x, (int) correctPath.get(i).y, (int) correctPath.get(i + 1).x, (int) correctPath.get(i + 1).y);
             }
+            if (frontier != null && frontier.size() > 0) {
+                Iterator<GameState> frontierIT = frontier.iterator();
+                while (frontierIT.hasNext()) {
+                    GameState current = frontierIT.next();
+                    g.setColor(Color.RED);
+                    g.drawOval((int) current.x, (int) current.y, 5, 5);
+                }
+
+
+            }
         }
+
     }
 
     void update(Model m) {
         Controller c = m.getController();
         pathPlanner = new PathPlanner(m);
 
-
         while (true) {
             MouseEvent e = c.nextMouseEvent();
-            if (startPrinting && i < correctPath.size() - 1 && correctPath.get(i).x == m.getX() && correctPath.get(i).y == m.getY()) {
-                i++;
-                m.setDestination(correctPath.get(i).x, correctPath.get(i).y);
-
-
+            if (uniformCostSearch && correctPath != null && correctPath.get(1).x == m.getX() && correctPath.get(1).y == m.getY()) {
+                correctPath = new LinkedList<GameState>();
+                GameState currentState = new GameState(null);
+                currentState.x = m.getX();
+                currentState.y = m.getY();
+                finalState = pathPlanner.uniformCostSearch(currentState, finalState);
+                correctPath(finalState);
+                frontier = pathPlanner.frontier;
+                if (correctPath.size() == 1) {
+                    uniformCostSearch = false;
+                } else {
+                    m.setDestination(correctPath.get(1).x, correctPath.get(1).y);
+                }
+            }
+            if (aStarSearch && correctPath != null && correctPath.get(1).x == m.getX() && correctPath.get(1).y == m.getY()) {
+                correctPath = new LinkedList<GameState>();
+                GameState currentState = new GameState(null);
+                currentState.x = m.getX();
+                currentState.y = m.getY();
+                finalState = pathPlanner.aStarSearch(currentState, finalState);
+                correctPath(finalState);
+                frontier = pathPlanner.frontier;
+                if (correctPath.size() == 1) {
+                    aStarSearch = false;
+                } else {
+                    m.setDestination(correctPath.get(1).x, correctPath.get(1).y);
+                }
             }
             if (e == null)
                 break;
             if (e.getButton() == MouseEvent.BUTTON1) {
                 correctPath = new LinkedList<GameState>();
                 GameState currentState = new GameState(null);
-                currentState.x = m.getX();
-                currentState.y = m.getY();
+                currentState.x = (int) m.getX() / 10;
+                currentState.y = (int) m.getY() / 10;
+                currentState.x = currentState.x * 10;
+                currentState.y = currentState.y * 10;
                 GameState goalState = new GameState(null);
                 goalState.x = e.getX() / 10;
                 goalState.y = e.getY() / 10;
                 goalState.x = goalState.x * 10;
                 goalState.y = goalState.y * 10;
-                GameState finalState = pathPlanner.uniformCostSearch(currentState, goalState);
+                finalState = pathPlanner.uniformCostSearch(currentState, goalState);
                 correctPath(finalState);
-                startPrinting = true;
-                i = 0;
+                frontier = pathPlanner.frontier;
+                m.setDestination(correctPath.get(1).x, correctPath.get(1).y);
+                uniformCostSearch = true;
+            }
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                correctPath = new LinkedList<GameState>();
+                GameState currentState = new GameState(null);
+                currentState.x = (int) m.getX() / 10;
+                currentState.y = (int) m.getY() / 10;
+                currentState.x = currentState.x * 10;
+                currentState.y = currentState.y * 10;
+                GameState goalState = new GameState(null);
+                goalState.x = e.getX() / 10;
+                goalState.y = e.getY() / 10;
+                goalState.x = goalState.x * 10;
+                goalState.y = goalState.y * 10;
+                finalState = pathPlanner.aStarSearch(currentState, goalState);
+                correctPath(finalState);
+                frontier = pathPlanner.frontier;
+                m.setDestination(correctPath.get(1).x, correctPath.get(1).y);
+                aStarSearch = true;
             }
         }
     }
