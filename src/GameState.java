@@ -8,22 +8,25 @@ public class GameState {
     public GameState parent;
     public float x;
     public float y;
+    public float heuristic;
 
     public GameState(GameState parent, double cost) {
         this.parent = parent;
         this.cost = cost;
+        heuristic = 0;
     }
 
     public GameState(GameState parent) {
         this.parent = parent;
+        heuristic = 0;
     }
 }
 
 class StateComparatorPriority implements Comparator<GameState> {
     public int compare(GameState a, GameState b) {
-        if (a.cost < b.cost)
+        if (a.cost + a.heuristic < b.cost + b.heuristic)
             return -1;
-        else if (a.cost > b.cost)
+        else if (a.cost + a.heuristic > b.cost + b.heuristic)
             return 1;
         return 0;
     }

@@ -126,11 +126,12 @@ public class PathPlanner {
     public void checkChildAStar(GameState nextState, int xDelta, int yDelta, GameState goalState) {
         nextState.x = nextState.parent.x + xDelta;
         nextState.y = nextState.parent.y + yDelta;
+        nextState.heuristic = (float) model.getDistanceToDestination(nextState, goalState) / maxSpeed;
         if (nextState.x < Model.XMAX && nextState.x >= 0 && nextState.y < Model.YMAX && nextState.y >= 0)
             if (abs(xDelta) + abs(yDelta) == 20)
-                nextState.cost = (10 * sqrt(2) / model.getTravelSpeed(nextState.x, nextState.y)) + nextState.parent.cost + (model.getDistanceToDestination(nextState, goalState) / maxSpeed);
+                nextState.cost = (10 * sqrt(2) / model.getTravelSpeed(nextState.x, nextState.y)) + nextState.parent.cost;
             else
-                nextState.cost = (10 / model.getTravelSpeed(nextState.x, nextState.y)) + nextState.parent.cost + (model.getDistanceToDestination(nextState, goalState) / maxSpeed);
+                nextState.cost = (10 / model.getTravelSpeed(nextState.x, nextState.y)) + nextState.parent.cost;
         else
             return;
 

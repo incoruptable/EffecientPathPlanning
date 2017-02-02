@@ -29,8 +29,8 @@ class Agent {
                 Iterator<GameState> frontierIT = frontier.iterator();
                 while (frontierIT.hasNext()) {
                     GameState current = frontierIT.next();
-                    g.setColor(Color.RED);
-                    g.drawOval((int) current.x, (int) current.y, 5, 5);
+                    if (current.x < Model.XMAX && current.y < Model.YMAX && current.x >= 0 && current.y >= 0)
+                        g.drawOval((int) current.x, (int) current.y, 5, 5);
                 }
 
 
@@ -45,7 +45,7 @@ class Agent {
 
         while (true) {
             MouseEvent e = c.nextMouseEvent();
-            if (uniformCostSearch && correctPath != null && correctPath.get(1).x == m.getX() && correctPath.get(1).y == m.getY()) {
+            if (uniformCostSearch && !aStarSearch && correctPath != null && correctPath.get(1).x == m.getX() && correctPath.get(1).y == m.getY()) {
                 correctPath = new LinkedList<GameState>();
                 GameState currentState = new GameState(null);
                 currentState.x = m.getX();
@@ -59,7 +59,7 @@ class Agent {
                     m.setDestination(correctPath.get(1).x, correctPath.get(1).y);
                 }
             }
-            if (aStarSearch && correctPath != null && correctPath.get(1).x == m.getX() && correctPath.get(1).y == m.getY()) {
+            if (aStarSearch && !uniformCostSearch && correctPath != null && correctPath.get(1).x == m.getX() && correctPath.get(1).y == m.getY()) {
                 correctPath = new LinkedList<GameState>();
                 GameState currentState = new GameState(null);
                 currentState.x = m.getX();
@@ -92,6 +92,7 @@ class Agent {
                 frontier = pathPlanner.frontier;
                 m.setDestination(correctPath.get(1).x, correctPath.get(1).y);
                 uniformCostSearch = true;
+                aStarSearch = false;
             }
             if (e.getButton() == MouseEvent.BUTTON3) {
                 correctPath = new LinkedList<GameState>();
@@ -110,6 +111,7 @@ class Agent {
                 frontier = pathPlanner.frontier;
                 m.setDestination(correctPath.get(1).x, correctPath.get(1).y);
                 aStarSearch = true;
+                uniformCostSearch = false;
             }
         }
     }
